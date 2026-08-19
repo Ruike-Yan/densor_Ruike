@@ -5084,6 +5084,10 @@
 		(uuid "0f6f0518-0d9a-44ef-9565-9a4ccaa8a0d7")
 	)
 	(no_connect
+		(at 204.47 107.95)
+		(uuid "1197849a-8721-4203-a3df-5ec752c63d9e")
+	)
+	(no_connect
 		(at 50.8 55.88)
 		(uuid "129dacf2-de6f-436d-b102-5781120cb594")
 	)
@@ -5116,10 +5120,6 @@
 		(uuid "5773e42e-d964-49ea-975d-5b41abd9c862")
 	)
 	(no_connect
-		(at 204.47 107.95)
-		(uuid "67cb1f93-1ee1-430b-8692-6e4f4c69cb2a")
-	)
-	(no_connect
 		(at 96.52 158.75)
 		(uuid "686a0927-33d2-4ce6-80ae-d3d583441cdc")
 	)
@@ -5144,10 +5144,6 @@
 		(uuid "7a1dfd6a-4672-4bc0-8363-559d1abaac24")
 	)
 	(no_connect
-		(at 204.47 100.33)
-		(uuid "81992d24-da6a-491f-9c77-bcd5330638aa")
-	)
-	(no_connect
 		(at 119.38 148.59)
 		(uuid "8b660680-24d2-4aaa-ae49-b8c9f3cbb5c7")
 	)
@@ -5162,6 +5158,10 @@
 	(no_connect
 		(at 227.33 53.34)
 		(uuid "9db11544-cc15-4011-a8b7-9b8b47d37893")
+	)
+	(no_connect
+		(at 204.47 100.33)
+		(uuid "9fd3233a-fcdd-478a-bae1-8a6049375e5d")
 	)
 	(no_connect
 		(at 53.34 166.37)
@@ -6119,16 +6119,6 @@
 	)
 	(wire
 		(pts
-			(xy 207.01 102.87) (xy 204.47 102.87)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "beff6606-7050-4b4c-8d7a-fec53d42e3b2")
-	)
-	(wire
-		(pts
 			(xy 194.31 160.02) (xy 204.47 160.02)
 		)
 		(stroke
@@ -6326,6 +6316,16 @@
 			(type default)
 		)
 		(uuid "e8dde4e0-d25e-4ba1-b162-45c38e96f372")
+	)
+	(wire
+		(pts
+			(xy 204.47 102.87) (xy 207.01 102.87)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e98e3d14-1288-44c9-88cb-15245b8f3948")
 	)
 	(wire
 		(pts
@@ -8390,7 +8390,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "MAX30208CLB+"
+		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/MAX30208.pdf"
 			(at 163.83 100.33 0)
 			(hide yes)
 			(show_name no)
