@@ -26,6 +26,14 @@
 #define ACCEL_ADDR 					0x32
 #define DEBUG_TERMINAL				0xAA
 #define AM1805_ADDR 				0xD2
+#define MAX30208_ADDR       		0xA0
+
+#define TEMP_SETUP        			0x14
+#define TEMP_FIFO_REG     			0x08
+#define TEMP_STATUS       			0x00
+#define TEMP_READY_MASK     		0x01
+#define TEMP_START_MASK     		0xC1
+
 
 #define ACCEL_TEMP_BASE				0x0D
 #define ACCEL_CONTROL1				0x20
@@ -92,6 +100,7 @@ bool tempEnable = false;
 bool moistureEnable = false;
 bool pdEnable = false;
 bool accelEnable = false;
+bool bodyTempEnable = false;
 
 /* USER CODE END PV */
 
@@ -285,6 +294,11 @@ void enableSensors() {
 
 	if (pdEnable) {
 		HAL_ADCEx_Calibration_Start(&hadc, ADC_SINGLE_ENDED);
+	}
+
+	if (bodyTempEnable) {
+		uint8_t tempStart = TEMP_START_MASK;
+		HAL_I2C_Mem_Write(&hi2c1, MAX30208_ADDR, TEMP_SETUP, I2C_MEMADD_SIZE_8BIT, &tempStart, 1, HAL_MAX_DELAY);
 	}
 
 }
@@ -489,10 +503,13 @@ int main(void)
   // Conversion to bool, False if 0, True otherwise.
   rcEnable = sensorEnable 	 & 0b10000000; // 0 means RTC on XT oscillator. 1 means RTC on RC oscillator.
   tempEnable = sensorEnable 	 & 0b00100000;
-  if ((sensorEnable & 0b00010110)) {
-	  sensorEnable = sensorEnable & 0b11101001;
-	  writeMemory(&sensorEnable, 1, SENSOR_ENABLE_REG);
+  bodyTempEnable = sensorEnable & 0b00010000;
+
+  if (sensorEnable & 0b00000110) {
+      sensorEnable = sensorEnable & 0b11111001;
+      writeMemory(&sensorEnable, 1, SENSOR_ENABLE_REG);
   }
+
   pdEnable = sensorEnable 		 & 0b00001000;
   accelEnable = sensorEnable 	 & 0b00000001;
 
@@ -560,6 +577,24 @@ int main(void)
 	  HAL_I2C_Mem_Read(&hi2c1, (uint16_t) ACCEL_ADDR, ACCEL_OUT_X_L, I2C_MEMADD_SIZE_8BIT, inputBuffer + inputPointer, 6, HAL_MAX_DELAY);
 	  inputPointer += 6;
   }
+
+  if (bodyTempEnable) {
+	  uint8_t tempStatus = 0;
+	  // track time, wrost case 50 ms
+	  uint8_t waitTime = 0;
+	  while (!(tempStatus & TEMP_READY_MASK) && waitTime < 50) {
+		  HAL_I2C_Mem_Read(&hi2c1, MAX30208_ADDR, TEMP_STATUS, I2C_MEMADD_SIZE_8BIT, &tempStatus, 1, HAL_MAX_DELAY);
+		  if (!(tempStatus & TEMP_READY_MASK)) {
+			  HAL_Delay(1);
+			  waitTime++;
+		  }
+		  else{
+			  HAL_I2C_Mem_Read(&hi2c1, MAX30208_ADDR, TEMP_FIFO_REG, I2C_MEMADD_SIZE_8BIT, inputBuffer + inputPointer, 2, HAL_MAX_DELAY);
+		  }
+	  }
+	  inputPointer += 2;
+  }
+  
 
   // Write sensor values to NFC tag. Then enter RTC sleep with interval set in settings.
   writeDataMemory(inputBuffer, inputPointer);
